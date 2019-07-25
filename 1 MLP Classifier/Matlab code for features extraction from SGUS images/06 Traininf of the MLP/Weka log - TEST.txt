@@ -1,0 +1,26 @@
+=== Summary ===   balansirati test set
+
+Correctly Classified Instances          78               78      %
+Incorrectly Classified Instances        22               22      %
+Kappa statistic                          0.7067
+Mean absolute error                      0.1195
+Root mean squared error                  0.3054
+Total Number of Instances              100     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.960    0.053    0.857      0.960    0.906      0.874    0.970     0.902     0
+                 0.720    0.080    0.750      0.720    0.735      0.649    0.889     0.841     1
+                 0.720    0.107    0.692      0.720    0.706      0.605    0.911     0.683     2
+                 0.720    0.053    0.818      0.720    0.766      0.697    0.921     0.847     3
+Weighted Avg.    0.780    0.073    0.779      0.780    0.778      0.706    0.923     0.818     
+
+=== Confusion Matrix ===
+
+  a  b  c  d   <-- classified as
+ 24  1  0  0 |  a = 0
+  4 18  3  0 |  b = 1
+  0  3 18  4 |  c = 2
+  0  2  5 18 |  d = 3
+
