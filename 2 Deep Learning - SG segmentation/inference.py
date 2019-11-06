@@ -1,183 +1,248 @@
 import tensorflow as tf
 import numpy as np
+import datetime
+
+import utils
+
 import cv2
-import glob
-import os
-import matplotlib.pyplot as plt
-#%matplotlib inline
-import pickle
+from time import sleep
+import glob, os
+
+from multiprocessing import Process, Queue
+
+import tkinter as tk
+from tkinter import *
+from PIL import Image, ImageTk
 import time
 
-# IOU calculation
-# set data you want to analyze
-dataset_part4eval = "testing" # "testing" or "validation"
+FLAGS = tf.flags.FLAGS
+tf.flags.DEFINE_string('inference_graph_path', "./inference_graph/frozen_graph.pb", "Path to inference graph to be imported")
+tf.flags.DEFINE_string("test_dir_input", "data_test/images/", "path to test images directory")
+tf.flags.DEFINE_string("test_dir_output", "data_test/predictions/", "path to test images predictions")
+tf.flags.DEFINE_string('mode', "test", "Mode: stream / video/ test")
+tf.flags.DEFINE_integer('num_of_classes', 2, "Number of classes")
+tf.flags.DEFINE_integer('input_size', 224, "Input image size")
+tf.flags.DEFINE_boolean('resize_image', False, "Whether to resize input image and store resized one as the output")
+tf.flags.DEFINE_integer('image_width', 640, "image height")
+tf.flags.DEFINE_integer('image_height', 480, "image width")
+tf.flags.DEFINE_boolean('display_fps', False, "Display frame per second")
+tf.flags.DEFINE_string("path_to_video_input", "test.mp4", "path to the input video file")
+tf.flags.DEFINE_string("path_to_video_output", "predicted.mp4", "path to the output video file")
 
-# set model to be used for inference
-inference_graph_path = "D:/_Ultrazvuk 2017 HARMONICS/_Objavljeni radovi/08 Pattern recognition      - Segmentation/_inference folder/inference/logs/FCN8_v2.TL_True.1.2k_images.res_224.learning_rate=1e-05.dropout=0.9.training_iter=0.8M.batch_size=16.cost_softmax_cross_entropy.rot_True.flip_True.crop_True.gauss_True.fixed_standardization_False/frozen_graph.pb"
-#inference_graph_path = "logs/FCN8_v2.TL_True.1.2k_images.res_224.learning_rate=1e-05.dropout=0.9.training_iter=0.8M.batch_size=16.cost_softmax_cross_entropy.rot_True.flip_True.crop_True.gauss_True.fixed_standardization_False/frozen_graph.pb"
-#inference_graph_path = "./logs/linkNet.TL_False.1.2k_images.res_224.learning_rate=1e-05.dropout=1.0.training_iter=0.8M.batch_size=8.cost_softmax_cross_entropy.rot_True.flip_True.crop_True.gauss_True.fixed_standardization_False/frozen_graph.pb"
-#inference_graph_path = "./logs/tiramisu103.TL_False.1.2k_images.res_224.learning_rate=1e-05.dropout=0.95.training_iter=0.8M.batch_size=4.cost_softmax_cross_entropy.rot_True.flip_True.crop_True.gauss_True.fixed_standardization_False/frozen_graph.pb"
-#inference_graph_path = "./logs/u_net_v1.TL_False.1.2k_images.res_228.learning_rate=1e-05.dropout=0.9.training_iter=0.8M.batch_size=8.cost_softmax_cross_entropy.rot_True.flip_True.crop_True.gauss_True.fixed_standardization_False/frozen_graph.pb"
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
-model_name = inference_graph_path.split('/')[7].split('.')[0]
-if model_name == 'u_net_v1':
-    input_size = 228
-else:
-    input_size = 224
+def run_inference(q_in, q_cam, q_pred):
+    print("Starting infrence process...") 
 
-dataset_imgs_path = os.path.join("dataset/DATA/images",dataset_part4eval)
-dataset_anns_path = os.path.join("dataset/DATA/annotations",dataset_part4eval)
+    if tf.gfile.Exists(FLAGS.inference_graph_path):
+        print('Frozen graph file found: %s'%FLAGS.inference_graph_path)
+    else:
+        raise Exception('Frozen graph file not found: %s'%FLAGS.inference_graph_path)
 
-imgs_path = glob.glob(dataset_imgs_path+'/*.png')
-anns_path = glob.glob(dataset_anns_path+'/*.png')
+    with tf.gfile.GFile(name=FLAGS.inference_graph_path,mode='rb') as f:
+        input_graph_def = tf.GraphDef()
+        input_graph_def.ParseFromString(f.read())
 
-def get_IOUs(ann_gt,ann_pred):
-    TP = np.sum(ann_gt*ann_pred)
-    FNplusTP = np.sum(ann_gt) 
-    FPplusTP = np.sum(ann_pred)
-    IOU_product = TP/(FNplusTP+FPplusTP-TP)
-    
-    TN = np.sum((ann_gt==0)*(ann_pred==0))
-    TNplusFP = np.sum(ann_gt==0)
-    TNplusFN = np.sum(ann_pred==0)
-    IOU_background = TN/(TNplusFP+TNplusFN-TN)
-    
-    IOU_mean = (IOU_product + IOU_background)/2
-    
-    return IOU_mean,IOU_product
+    graph = tf.get_default_graph()
 
-NUM_OF_CLASSESS = 2
-tf.reset_default_graph()
+    with tf.Session() as sess:
+        print("Importing graph...")
+        tf.import_graph_def(input_graph_def,name='import')
 
-iou_mean_curr_global = 0
-iou_product_curr_global =  0
-
-with tf.gfile.GFile(name=inference_graph_path,mode='rb') as f:
-    input_graph_def = tf.GraphDef()
-    input_graph_def.ParseFromString(f.read())
-    
-graph = tf.get_default_graph()
-
-with tf.Session() as sess:
-    tf.import_graph_def(input_graph_def,name='import')
-
-    image = graph.get_tensor_by_name('import/input_image:0')
-    pred_annotation = graph.get_tensor_by_name('import/inference/prediction:0')    
-    keep_probability = graph.get_tensor_by_name('import/keep_probabilty:0')
-    TRAINING = graph.get_tensor_by_name('import/TRAINING:0')
-    annotation = tf.placeholder(dtype=tf.int32,shape=[None,input_size,input_size,1])
-    
-    with tf.name_scope('metrics') as scope:
-        iou_mean, cm_update_op = tf.metrics.mean_iou(labels=annotation, predictions=tf.expand_dims(pred_annotation,axis=3), num_classes=NUM_OF_CLASSESS)
-        conf_mat = tf.Variable(initial_value=np.zeros([NUM_OF_CLASSESS,NUM_OF_CLASSESS]),name='confusion_matrix')
-        iou_background = tf.divide(conf_mat[0,0],tf.subtract(tf.add(tf.reduce_sum(conf_mat,0)[0],tf.reduce_sum(conf_mat,1)[0]),conf_mat[0,0]),name='iou_background')
-        iou_product =      tf.divide(conf_mat[1,1],tf.subtract(tf.add(tf.reduce_sum(conf_mat,0)[1],tf.reduce_sum(conf_mat,1)[1]),conf_mat[1,1]),name='iou_product') 
+        image = graph.get_tensor_by_name('import/input_image:0')
+        keep_probability = graph.get_tensor_by_name('import/keep_probabilty:0')
+        TRAINING = graph.get_tensor_by_name('import/TRAINING:0')
+        pred_annotation = graph.get_tensor_by_name('import/inference/prediction:0')
         
-        
-    img_path_list = []
-    IOU_mean_list = []
-    IOU_product_list = []
-    img_list = [] 
-    true_ann_list = []
-    pred_ann_list = []
-    
-    metrics_vars = [v for v in tf.local_variables() if 'metrics' in v.name]
-    sess.run(tf.variables_initializer(metrics_vars))    
-        
-    for idx in range(len(imgs_path)):
+        frame_count = 0
+        time_FPS = 3
+        frame_rate = None
         start_time = time.time()
-        
-        img_path = imgs_path[idx]
-        img = cv2.imread(img_path)
-        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img,(input_size,input_size))
-        
-        ann_path = anns_path[idx]
-        ann = cv2.imread(ann_path)
-        ann = cv2.resize(ann,(input_size,input_size))
-        ann = ann[:,:,0]
-        ann = np.expand_dims(ann,2)         
-        
-        feed_dict={image:np.expand_dims(img,0), keep_probability:1.0, TRAINING:False, annotation:np.expand_dims(ann,0)}
-        cm, pred_ann = sess.run([cm_update_op,pred_annotation], feed_dict=feed_dict)
-       
-        iou_mean_curr_global = iou_mean.eval()
-        conf_mat.load(cm, sess)
-        iou_product_curr_global =  iou_product.eval() 
-      
-        iou_mean_curr, iou_product_curr = get_IOUs(ann.squeeze(),pred_ann.squeeze())
-        
-        IOU_mean_list.append(iou_mean_curr)  
-        IOU_product_list.append(iou_product_curr)  
-        img_list.append(img)
-        pred_ann_list.append(pred_ann[0].astype(np.uint8))
-        true_ann_list.append(ann.squeeze(2))
-        img_path_list.append(imgs_path[idx]) 
-        
-       
-print('IoU (cumulative matrix): %f'%iou_mean_curr_global)
-print('Gland IoU (cumulative matrix): %f'%iou_product_curr_global)
 
-print('Average IoU: %f'%np.nanmean(IOU_mean_list))
-print('Average gland IoU: %f'%np.nanmean(IOU_product_list))
+        while(True):
+            while q_in.empty():
+                sleep(0.03)
+            
+            frame_count += 1
+            if time.time() - start_time > time_FPS:
+                frame_rate = round(frame_count/time_FPS)
+                start_time = time.time()
+                frame_count = 0
 
+            if FLAGS.mode == "stream":
+                frame = [q_in.get() for _ in range(q_in.qsize())][-1]
+            elif FLAGS.mode in ["video", "test"]:
+                frame = q_in.get()
 
-# Print 10 worst IoU values
+            frame_RGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame_RGB = cv2.resize(frame_RGB,(FLAGS.input_size,FLAGS.input_size))
+            frame_RGB = frame_RGB.reshape(1,frame_RGB.shape[0],frame_RGB.shape[1],frame_RGB.shape[2])
+            pred = sess.run(pred_annotation, feed_dict={image: frame_RGB, keep_probability: 1.0, TRAINING: False})
+            final_mask_pred = utils.get_final_mask(pred[0],frame,FLAGS.num_of_classes)
 
-indices = sorted(range(len(IOU_product_list)), key=lambda k: IOU_product_list[k])[0:10]
-[{img_path_list[idx].split('/')[-1]:IOU_product_list[idx]} for idx in indices]
+            # Postprocess results
+            if FLAGS.display_fps and frame_rate is not None:
+                utils.add_overlays(final_mask_pred,frame_rate)
+            
+            q_pred.put(final_mask_pred)
+            q_cam.put(frame)
 
-# Print IOU values for given images
-
-IOU_product_list[[path.split('/')[-1] for path in img_path_list].index('11_¡mg420.png')]
-
-IOU_product_list[[path.split('/')[-1] for path in img_path_list].index('244_IMG-0001-00007.png')]
-
-IOU_product_list[[path.split('/')[-1] for path in img_path_list].index('164_STELLIN_0005.png')]
-
-IOU_product_list[[path.split('/')[-1] for path in img_path_list].index('371_¡mg043.png')]
-
-# Plot input image, predicted annotations and ground truth annotations 
-plt.imshow(img_list[1])
-plt.imshow(pred_ann_list[1])
-plt.imshow(true_ann_list[1])
-plt.hist(IOU_mean_list,bins=20)
-plt.title('Mean IOU')
-plt.xlim((0,1))
-plt.hist(IOU_product_list,bins=20)
-plt.title('Gland IOU')
-plt.xlim((0,1))
-
-
-# Store images to be checked
-for idx in range(len(IOU_product_list)):
-    img = img_list[idx]
-    img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
     
-    ann = np.zeros(shape=[input_size,input_size,3],dtype=np.uint8)
-    ann[:,:,0] = true_ann_list[idx]
-    ann[:,:,1] = true_ann_list[idx]
-    ann[:,:,2] = true_ann_list[idx]
-   
-    pred_ann = np.zeros(shape=[input_size,input_size,3],dtype=np.uint8)
-    pred_ann[:,:,0] = pred_ann_list[idx]
-    pred_ann[:,:,1] = pred_ann_list[idx]
-    pred_ann[:,:,2] = pred_ann_list[idx]
+def run_gui(q_cam, q_pred):
+    print("Starting gui process...")    
     
-    prediction_img = np.zeros([input_size,input_size,3])
-    gt = (pred_ann[:,:,0]==1) * (ann[:,:,0]==1)
-    fp = (pred_ann[:,:,0]==1) * (ann[:,:,0]==0)
-    fn = (pred_ann[:,:,0]==0) * (ann[:,:,0]==1)
-    prediction_img[gt] = [0,255,0]
-    prediction_img[fp] = [0,0,255]
-    prediction_img[fn] = [0,255,255]    
+    #Set up GUI
+    window = tk.Tk()  #Makes main window
+    window.wm_title("OVERSCENE")
+    window.config(background="#FFFFFF")
+
+    #Graphics window
+    imageFrame = tk.Frame(window, width=600, height=500)
+    imageFrame.grid(row=0, column=0, padx=10, pady=2)
+
+    def show_frame():        
+
+        while q_cam.empty():
+            sleep(0.03)
+#         frame_entrance = q_entrance.get(block=True)
+        frame_cam = [q_cam.get() for _ in range(q_cam.qsize())][-1]
+        cv2image_cam = cv2.cvtColor(frame_cam, cv2.COLOR_BGR2RGBA)
+        img_cam = Image.fromarray(cv2image_cam)
+        imgtk_cam = ImageTk.PhotoImage(image=img_cam)
+        display1.imgtk = imgtk_cam #Shows frame for display 1
+        display1.configure(image=imgtk_cam)
+        
+        while q_pred.empty():
+            sleep(0.03)
+#         frame_entrance = q_entrance.get(block=True)
+        frame_pred = [q_pred.get() for _ in range(q_pred.qsize())][-1]
+        cv2image_pred = cv2.cvtColor(frame_pred, cv2.COLOR_BGR2RGBA)
+        img_pred = Image.fromarray(cv2image_pred)
+        imgtk_pred = ImageTk.PhotoImage(image=img_pred)
+        display2.imgtk = imgtk_pred #Shows frame for display 2
+        display2.configure(image=imgtk_pred)
+        
+        window.after(1, show_frame) 
+
+    display1 = tk.Label(imageFrame)
+    display1.grid(row=0, column=0, padx=10, pady=20)  #Display 1 - camera
     
-    merged_image = np.zeros(shape=[input_size,input_size*2+20,3])+100
-   
-    merged_image[0:input_size,0:input_size,:] = img
-    merged_image[0:input_size,input_size+20:input_size*2+20,:] = prediction_img
-    merged_image = merged_image.astype(np.uint8)
+    display2 = tk.Label(imageFrame)
+    display2.grid(row=0, column=1, padx=10, pady=20)  #Display 2 - mask
+
+    show_frame() #Display
+    window.mainloop()  #Starts GUI
+
+
+def main(argv=None):
+
+    q_in = Queue()
+    q_cam = Queue()
+    q_pred = Queue()
+
+    processes = []
+    p_inference = Process(target=run_inference, args=(q_in,q_cam,q_pred))
+    p_gui = Process(target=run_gui, args=(q_cam,q_pred))
+
+    if FLAGS.mode == "stream":
+        p_inference.start()
+        processes.append(p_inference)
+
+        p_gui.start()
+        processes.append(p_gui)
+
+        cap = cv2.VideoCapture(0)
+
+        while(True):
+            # Capture frame-by-frame
+            _, frame = cap.read()
+            if FLAGS.resize_image:
+                frame = cv2.resize(frame,(FLAGS.image_width,FLAGS.image_height))
+            q_in.put(frame)
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+        for p in processes:
+            p.join()
     
-    out_path = os.path.join('./worst_predictions',dataset_part4eval,model_name,'merged_'+ img_path_list[idx].split('/')[-1])
-    cv2.imwrite(out_path,merged_image)
-    
+    elif FLAGS.mode=='video':
+        
+        video_path = os.path.join(dir_path,FLAGS.path_to_video_input)
+        if not os.path.exists(video_path):
+            raise Exception("Error: unable to find video on provided path - %s"%FLAGS.path_to_video_input)
+
+        p_inference.start()
+        processes.append(p_inference)
+        
+        cap = cv2.VideoCapture(FLAGS.path_to_video_input)
+
+        total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        video_fps = cap.get(cv2.CAP_PROP_FPS)
+        print('Input video FPS: %d'%video_fps)
+
+        fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+        if FLAGS.resize_image:
+            out_video = cv2.VideoWriter(os.path.join(dir_path,FLAGS.path_to_video_output), 
+                                        fourcc, video_fps, 
+                                        (FLAGS.image_width, FLAGS.image_height))
+        else:
+            image_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            image_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            out_video = cv2.VideoWriter(os.path.join(dir_path,FLAGS.path_to_video_output), 
+                            fourcc, video_fps, 
+                            (image_width, image_height))
+
+        frames_processed = 0
+        time_start = time.time()
+        while(cap.isOpened()):
+            ret, frame = cap.read()
+
+            if ret:
+                if FLAGS.resize_image:
+                    frame = cv2.resize(frame,(FLAGS.image_width,FLAGS.image_height))
+                q_in.put(frame)
+                time_start = time.time()
+            elif time.time()-time_start > 5:
+                break
+
+            while q_in.qsize()>100:
+                sleep(0.2)
+            
+            if not q_pred.empty():   
+                frames_processed += 1
+                pred = q_pred.get()
+                out_video.write(pred)
+                print('Progress: %f %%'%(100*frames_processed/total_frames))
+
+        out_video.release()
+
+
+    elif FLAGS.mode == "test":
+        print('Loading test images...')
+        test_images_orig, file_names = utils.readTestData(FLAGS.test_dir_input,FLAGS.input_size)
+        
+        p_inference.start()
+        processes.append(p_inference)
+
+        for i in range(len(file_names)):
+            image = test_images_orig[i]
+            fname = file_names[i]
+
+            if FLAGS.resize_image:
+                image = cv2.resize(image,(FLAGS.image_width,FLAGS.image_height))
+
+            q_in.put(image)
+            pred = q_pred.get(block=True)
+            cv2.imwrite(os.path.join(FLAGS.test_dir_output,fname) + '.png' ,pred)
+            print('Image processed: %s'%fname)
+
+    else:
+        raise Exception('Error: unknown value for argument mode')
+
+    for p in processes:
+        p.terminate()
+
+
+if __name__ == "__main__":
+    tf.app.run()
