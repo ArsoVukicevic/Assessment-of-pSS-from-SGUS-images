@@ -24,14 +24,14 @@ Folder "FCN-DenseNet inference"
 	DeepSGUS = DeepSGUS_CNN('frozen_graph.pb')
 
 	#INPUT
-	inputImg    = 'IMG-0001-00008.jpg'
+	inputImg    = 'IMG-0001-00008.jpg' # arbitrary shape (determines the size of outputs)
 
 	#RUN SEGMENTATION
-	rez = DeepSGUS.segmentImage('in/' + inputImg)
+	rez = DeepSGUS.segmentImage('in/' + inputImg) # input could be image path (string) or image loaded with opencv (in the RGB colorspace)
 	
-	output_PerPixelPredictions = rez[0] # 0-bacground, 1-salivary gland (image)
-	output_BlackAndWhiteSG     = rez[1] # black-bacground, white-salivary gland (imge)
-	output_ContourOverInput    = rez[2] # resulting contour drawn over the input image (image)
+	output_PerPixelPredictions = rez[0] # 0-background, 1-salivary gland (image)
+	output_BlackAndWhiteSG     = rez[1] # black-background, white-salivary gland (imge)
+	output_ContourOverInput    = rez[2] # resulting contour is drawn over the input image (image)
 	output_contourSG_points    = rez[3] # contour points (array)
 
 	#SAVE
