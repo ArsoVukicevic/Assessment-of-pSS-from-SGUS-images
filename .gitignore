@@ -1,3 +1,4 @@
 2 Deep Learning - SG segmentation/logs/linkNet.TL_False.1.2k_images.res_224.learning_rate=1e-05.dropout=1.0.training_iter=0.8M.batch_size=8.cost_softmax_cross_entropy.rot_True.flip_True.crop_True.gauss_True.fixed_standardization_False/frozen_graph.pb
 2 Deep Learning - SG segmentation/logs/FCN8_v2.TL_True.1.2k_images.res_224.learning_rate=1e-05.dropout=0.9.training_iter=0.8M.batch_size=16.cost_softmax_cross_entropy.rot_True.flip_True.crop_True.gauss_True.fixed_standardization_False/frozen_graph.pb
 2 Deep Learning - SG segmentation/logs/u_net_v1.TL_False.1.2k_images.res_228.learning_rate=1e-05.dropout=0.9.training_iter=0.8M.batch_size=8.cost_softmax_cross_entropy.rot_True.flip_True.crop_True.gauss_True.fixed_standardization_False/frozen_graph.pb
+*.mat
