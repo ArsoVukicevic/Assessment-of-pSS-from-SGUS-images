@@ -27,10 +27,15 @@ Folder "FCN-DenseNet inference"
 	inputImg    = 'IMG-0001-00008.jpg'
 
 	#RUN SEGMENTATION
-	rez, output_BlackAndWhiteSG, output_ContourOverInput, output_contourSG_points = DeepSGUS.segmentImage('in/' + inputImg)
+	rez = DeepSGUS.segmentImage('in/' + inputImg)
+	
+	output_PerPixelPredictions = rez[0] # 0-bacground, 1-salivary gland (image)
+	utput_BlackAndWhiteSG      = rez[1] # black-bacground, white-salivary gland (imge)
+	output_ContourOverInput    = rez[2] # resulting contour drawn over the input image (image)
+	output_contourSG_points    = rez[3] # contour points (array)
 
 	#SAVE
-	cv.imwrite('out/' + inputImg + '_SG_PerPixelPredictions.jpg', rez) 
+	cv.imwrite('out/' + inputImg + '_SG_PerPixelPredictions.jpg', output_PerPixelPredictions) 
 	cv.imwrite('out/' + inputImg + '_SG_Black&White.jpg'        , output_BlackAndWhiteSG) 
 	cv.imwrite('out/' + inputImg + '_SG_ContourOverInput.jpg'   , output_ContourOverInput) 
 	np.savetxt('out/' + inputImg + '_SG_Contour_Points.txt'     , output_contourSG_points) 
