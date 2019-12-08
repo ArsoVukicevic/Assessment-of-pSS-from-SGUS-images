@@ -30,7 +30,7 @@ Folder "FCN-DenseNet inference"
 	rez = DeepSGUS.segmentImage('in/' + inputImg)
 	
 	output_PerPixelPredictions = rez[0] # 0-bacground, 1-salivary gland (image)
-	utput_BlackAndWhiteSG      = rez[1] # black-bacground, white-salivary gland (imge)
+	output_BlackAndWhiteSG     = rez[1] # black-bacground, white-salivary gland (imge)
 	output_ContourOverInput    = rez[2] # resulting contour drawn over the input image (image)
 	output_contourSG_points    = rez[3] # contour points (array)
 
