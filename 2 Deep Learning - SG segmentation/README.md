@@ -12,12 +12,14 @@ Authors Arso M. Vukicevic*,1,2, Milos Radovic*,2,3, Alen Zabotti4, Vera Milic5, 
 6. Department of Rheumatology, Ljubljana University Medical Centre, Ljubljana, Slovenia
 7. Department of Rheumatology, ASST Centro Traumatologico Ortopedico G. Pini-CTO, Milano, Italy
 
+----------------------------------------------------------------------------------------------
 
 Folder "FCN-DenseNet inference"
 
   Provides OOP inference (class DeepSGUS.py) for the best-performing algorihtm.
   Run script with examples (DeepSGUS - sample.py) to figure out how to use it in your own implementation.  
 
+----------------------------------------------------------------------------------------------
 
 Folder "Inference all four (FCN, FCN-DenseNet, U-Net, LinkNet) models" 
 
