@@ -41,9 +41,9 @@ Folder "FCN-DenseNet inference"
 	np.savetxt('out/' + inputImg + '_SG_Contour_Points.txt'     , output_contourSG_points) 
 ----------------------------------------------------------------------------------------------
 
-Folder "Inference all four (FCN, FCN-DenseNet, U-Net, LinkNet) models" 
+Folder "Inference all four (FCN, FCN-DenseNet, U-Net, LinkNet) models" enables inference on group of images and assesment of performances (IoU). 
 
-Instructions for running the inference script (inference.py is applied for all four developed models):
+Instructions for running the inference script:
 
 	python inference.py --mode=test   # inference for test images
 	
