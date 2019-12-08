@@ -13,4 +13,4 @@ Instructions for running the inference script (inference.py is applied for all f
 	python inference.py --mode=stream # inference for live camera
 
 
-Folder "FCN-DenseNet" provides OOP inference (class DeepSGUS) for the best-performing algorihtm, with examples (DeepSGUS - sample.py) how to use it in your own implementation.  
+Folder "_FCN-DenseNet" provides OOP inference (class DeepSGUS) for the best-performing algorihtm, with examples (DeepSGUS - sample.py) how to use it in your own implementation.  
