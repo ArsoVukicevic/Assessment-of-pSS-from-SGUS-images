@@ -16,7 +16,7 @@ Authors Arso M. Vukicevic*,1,2, Milos Radovic*,2,3, Alen Zabotti4, Vera Milic5, 
 
 Folder "FCN-DenseNet inference"
 
-  Provides OOP inference (class DeepSGUS.py) for the best-performing algorihtm.
+  Provides OOP inference (class DeepSGUS.py) for the best-performing algorithm.
   Check the script with examples (DeepSGUS - sample.py) to figure out how to use it in your own implementation.  
   Four steps: 
   
