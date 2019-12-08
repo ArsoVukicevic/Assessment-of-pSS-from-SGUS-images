@@ -1,0 +1,14 @@
+model: tiramisu103
+TL: False
+no. images: 1.2k
+res: 224
+learning_rate: 1e-05
+dropout: 0.95
+training_iter: 0.8M
+batch_size: 4
+cost: softmax_cross_entropy
+rot: True
+flip: True
+crop: True
+gauss: True
+fixed_standardization: False
