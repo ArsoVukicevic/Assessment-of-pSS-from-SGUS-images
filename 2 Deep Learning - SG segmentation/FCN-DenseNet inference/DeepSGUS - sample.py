@@ -1,7 +1,5 @@
 # Script for the automatic semantic segmentation of SGUS images
 
-# https://github.com/sebastianbeyer/concavehull/blob/master/ConcaveHull.py
-
 from DeepSGUS import DeepSGUS_CNN
 import matplotlib.pyplot as plt
 import cv2 as cv # Version 3.7
