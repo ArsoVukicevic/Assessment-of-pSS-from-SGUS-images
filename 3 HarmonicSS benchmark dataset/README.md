@@ -1,52 +1,26 @@
-Title: Deep SGUS: Deep learning segmentation of Primary Sjögren’s syndrome affected salivary glands from ultrasonography images
+Title: Public HarmonicSS benchmark data set for assessing the Reliability of salivary gland ultrasonography in Sjögren's Syndrome:  Results of a large multicenter study involving sonographers with different level of experience  
 
-Authors: Arso M. Vukicevic*,1,2, Milos Radovic*,2,3, Alen Zabotti4, Vera Milic5, Alojzija Hocevar6, Sara Zandonella Callegher4, Orazio De Lucia7, Salvatore De Vita4, Nenad Filipovic1,2
+Authors: Alen Zabotti1, Sara Zandonella Callegher1, Annarita Tullio2, Arso Vukicevic3, Alojzija Hocevar4, Vera Milic5, Giacomo Cafaro6, Marina Carotti7, Konstantina Delli8, Orazio De Lucia1, Diana Ernst9, Francesco Ferro10, Angelica Gattamelata11, Giuseppe Germanò12, Ivan Giovannini1, Daniel Hammenfors13, Malin Jonsson13, Sandrine Jousse-Joulin14, Pierluigi Macchioni12, Simone Parisi15, Carlo Perricone6, Martin Stradner16, Nenad Filipovic3, Athanasios G Tzioufas17  , Francesca Valent2 , Salvatore De Vita1*.   
 
-*Corresponding authors {arso_kg@yahoo.com, mradovic@kg.ac.rs} equally contributed to this work
+*Corresponding author {salvatore.devita@asufc.sanita.fvg.it} 
 
-1. Faculty of Engineering, University of Kragujevac, Sestre Janjic 6, Kragujevac, Serbia
-2. BioIRC R&D center, Prvoslava Stojanovica 6, Kragujevac, Serbia
-3. Everseen, Milutina milankovica 1z, Belgrade, Serbia
-4. Azienda Ospedaliero Universitaria, Santa Maria Della Misericordia di Udine, Udine, Italy
-5. Institute of Rheumatology, School of Medicine, University of Belgrade, Serbia
-6. Department of Rheumatology, Ljubljana University Medical Centre, Ljubljana, Slovenia
-7. Department of Rheumatology, ASST Centro Traumatologico Ortopedico G. Pini-CTO, Milano, Italy
+1 Rheumatology Clinic, Department of Medical Area, University of Udine, Academic Hospital S. Maria della Misericordia, Udine, Italy
+2 Institute of Epidemiology, Academic Hospital 'Santa Maria della Misericordia', Udine, Italy
+3 University of Kragujevac and BioIRC Kragujevac, Serbia 
+4 Department of Rheumatology, University Medical Centre Ljubljana, Slovenia
+5 Institute of Rheumatology, Belgrade, Serbia
+6 Rheumatology Unit, Department of Medicine, University of Perugia, Perugia, Italy
+7 Department of Radiology, Ospedali Riuniti, Università Politecnica delle Marche, Ancona, Italy
+8 Department of Oral and Maxillofacial Surgery, University of Groningen, University Medical Center Groningen, Groningen, The Netherlands
+9 Clinic for Immunology and Rheumatology, Hannover Medical School, Hannover, Germany
+10 Rheumatology Unit, Department of Clinical and Experimental Medicine, University of Pisa, 56126, Italy
+11 Department of Internal Medicine and Medical Specialties, Rheumatology, Sapienza University of Rome, Rome, Italy
+12 Rheumatology Unit, Department of Internal Medicine, Azienda Ospedaliera ASMN, Istituto di Ricovero e Cura a Carattere Scientifico, Reggio Emilia, Italy
+13 Broegelmann Research Laboratory, Department of Clinical Science, University of Bergen, and Department of Rheumatology, Haukeland University Hospital, Norway.
+14 Rheumatology Department, INSERM UMR 1227, Cavale Blanche Hospital and Brest Occidentale University, Brest, France
+15 Unit of Rheumatology, Department of General and Specialty Medicine, Città della Salute e della Scienza, Turin, Italy
+16 Department of Rheumatology and Immunology, Medical University of Graz, Auenbruggerplatz 15, 8036 Graz, Austria
+17 Department of Pathophysiology, School of Medicine, National and Kapodistrian University of Athens, Athens, Greece
 
 ----------------------------------------------------------------------------------------------
 
-Folder "FCN-DenseNet inference"
-
-  Provides OOP inference (class DeepSGUS.py) for the best-performing algorithm.
-  Check the script with examples (DeepSGUS - sample.py) to figure out how to use it in your own implementation.  
-  Four steps: 
-  
-	#LOAD PRETRAINED MODEL
-	DeepSGUS = DeepSGUS_CNN('frozen_graph.pb')
-
-	#INPUT
-	inputImg    = 'IMG-0001-00008.jpg' # arbitrary shape (determines the size of outputs)
-
-	#RUN SEGMENTATION
-	rez = DeepSGUS.segmentImage('in/' + inputImg) # input could be image path (string) or image loaded with opencv (in the RGB colorspace)
-	
-	output_PerPixelPredictions = rez[0] # 0-background, 1-salivary gland (image)
-	output_BlackAndWhiteSG     = rez[1] # black-background, white-salivary gland (imge)
-	output_ContourOverInput    = rez[2] # resulting contour is drawn over the input image (image)
-	output_contourSG_points    = rez[3] # contour points (array)
-
-	#SAVE
-	cv.imwrite('out/' + inputImg + '_SG_PerPixelPredictions.jpg', output_PerPixelPredictions) 
-	cv.imwrite('out/' + inputImg + '_SG_Black&White.jpg'        , output_BlackAndWhiteSG) 
-	cv.imwrite('out/' + inputImg + '_SG_ContourOverInput.jpg'   , output_ContourOverInput) 
-	np.savetxt('out/' + inputImg + '_SG_Contour_Points.txt'     , output_contourSG_points) 
-----------------------------------------------------------------------------------------------
-
-Folder "Inference all four (FCN, FCN-DenseNet, U-Net, LinkNet) models" enables inference on group of images and assesment of performances (IoU). 
-
-Instructions for running the inference script:
-
-	python inference.py --mode=test   # inference for test images
-	
-	python inference.py --mode=video  # inference for test video
-	
-	python inference.py --mode=stream # inference for live camera
