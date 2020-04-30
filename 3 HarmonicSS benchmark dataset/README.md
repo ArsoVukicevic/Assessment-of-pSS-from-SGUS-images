@@ -1,8 +1,12 @@
+This repository contains HarmonicSS salivary glands ultrasonography (SGUS) images used in the study: 
+
 # Public HarmonicSS benchmark data set for assessing the Reliability of salivary gland ultrasonography in Sjögren's Syndrome:  Results of a large multicenter study involving sonographers with different level of experience  
 
 Authors: Alen Zabotti1, Sara Zandonella Callegher1, Annarita Tullio2, Arso Vukicevic3, Alojzija Hocevar4, Vera Milic5, Giacomo Cafaro6, Marina Carotti7, Konstantina Delli8, Orazio De Lucia1, Diana Ernst9, Francesco Ferro10, Angelica Gattamelata11, Giuseppe Germanò12, Ivan Giovannini1, Daniel Hammenfors13, Malin Jonsson13, Sandrine Jousse-Joulin14, Pierluigi Macchioni12, Simone Parisi15, Carlo Perricone6, Martin Stradner16, Nenad Filipovic3, Athanasios G Tzioufas17  , Francesca Valent2 , Salvatore De Vita1*.   
 
 *Corresponding author {salvatore.devita@asufc.sanita.fvg.it} 
+
+Funding source: This study is included in the Workpackage 7 of  HarmonicSS,  an  EU-funded, Horizon 2020 Research Project on SS. (European Union grant 731944). 
 
 1. Rheumatology Clinic, Department of Medical Area, University of Udine, Academic Hospital S. Maria della Misericordia, Udine, Italy
 2. Institute of Epidemiology, Academic Hospital 'Santa Maria della Misericordia', Udine, Italy
@@ -24,3 +28,10 @@ Authors: Alen Zabotti1, Sara Zandonella Callegher1, Annarita Tullio2, Arso Vukic
 
 ----------------------------------------------------------------------------------------------
 
+# Organization of the repository
+
+The folder “Anonymized images” contains a total of 225 SGUS images, acquired from the four clinical centers in Europe, particularly:
+•	Rheumatology Clinic, Department of Medical Area, University of Udine, Academic Hospital S. Maria della Misericordia, Udine, Italy (Alen Zabotti, Sara Zandonella, Salvatore De Vita)
+•	 Department of Rheumatology, University Medical Centre Ljubljana, Slovenia (Alojzija Hocevar)
+•	Institute of Rheumatology, Belgrade, Serbia (Vera Milic)
+•	Unit of Clinical Rheumatology, Department of Rheumatology and Medical Sciences, ASST Centro Traumatologico Ortopedico G. Pini-CTO, Milan, Italy (Orazio De Lucia)
