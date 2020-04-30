@@ -1,4 +1,4 @@
-Title: Deep SGUS: Deep learning segmentation of Primary Sjögren’s syndrome affected salivary glands from ultrasonography images
+# Deep SGUS: Deep learning segmentation of Primary Sjögren’s syndrome affected salivary glands from ultrasonography images
 
 Authors: Arso M. Vukicevic*,1,2, Milos Radovic*,2,3, Alen Zabotti4, Vera Milic5, Alojzija Hocevar6, Sara Zandonella Callegher4, Orazio De Lucia7, Salvatore De Vita4, Nenad Filipovic1,2
 
@@ -50,3 +50,7 @@ Instructions for running the inference script:
 	python inference.py --mode=video  # inference for test video
 	
 	python inference.py --mode=stream # inference for live camera
+
+# Sample results
+![](GUI%20code/images/Figure%206.tif)
+
