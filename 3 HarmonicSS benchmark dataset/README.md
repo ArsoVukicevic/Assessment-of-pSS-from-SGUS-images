@@ -36,7 +36,7 @@ The folder “Anonymized images” contains a total of 225 SGUS images, acquired
 - Institute of Rheumatology, Belgrade, Serbia (Vera Milic)
 - Unit of Clinical Rheumatology, Department of Rheumatology and Medical Sciences, ASST Centro Traumatologico Ortopedico G. Pini-CTO, Milan, Italy (Orazio De Lucia)
 
-Furthermore, we provide an accompanying excel file “Data info.xls” with the corresponding information about provided images, including:
+Furthermore, we provide an accompanying excel file “Anonymized images - Info.xls” with the corresponding information about provided images, including:
 - gland type (parotid/submandibular), 
 - ultrasonography device brand (GE-Belgrade, Philips-Ljubljana, Esaote-Milano, Samsung-Udine), 
 - definite pSS (primary Sjogren’s syndrome) scores (De Vita, and OMERACT),
@@ -44,7 +44,7 @@ Furthermore, we provide an accompanying excel file “Data info.xls” with the 
 
 # Purpose of the repository and the HarmonicSS initiative
 
-HarmonicSS is EU Commission-funded (http://harmonicss.eu) initiative, which gather the leading pSS experts (35 partners from 13 countries) with the aim to envelop independently reported cohorts and metacentric data. At the current stage of the initiative, this data set was used to: i) compare the reliability performance between of two semi-quantitative SGUS scores (i.e., De Vita et al. and OMERACT score); ii) evaluate the reliability among sonographers with a different levels of expertise in SGUS, and knowledge of the two scores tested in the study; iii) provide a data set that will be publically available to serve as a standardized benchmark for further studies on SGUS. Thus, the principal idea with this public data set is to increase transparency and reproducibility on the topic of pSS in SGUS.
+HarmonicSS is EU Commission-funded (http://harmonicss.eu) initiative, which gather the leading pSS experts (35 partners from 13 countries) with the aim to envelop independently reported cohorts and metacentric data. At the current stage of the initiative, this data set was used to: i) compare the reliability performance between of two semi-quantitative SGUS scores (i.e., De Vita et al. and OMERACT score); ii) evaluate the reliability among sonographers with a different levels of expertise in SGUS, and knowledge of the two scores tested in the study; iii) provide a data set that will be publically available to serve as a standardized/public benchmark for further studies on SGUS. Thus, the principal idea with this public data set is to increase transparency and reproducibility on the topic of pSS in SGUS.
 
 # Referent performances obtained in the proposing study
 
