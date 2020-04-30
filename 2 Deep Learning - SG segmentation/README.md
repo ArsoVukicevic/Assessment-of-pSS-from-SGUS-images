@@ -52,5 +52,5 @@ Instructions for running the inference script:
 	python inference.py --mode=stream # inference for live camera
 
 # Sample results
-![](GUI%20code/images/Figure%206.tif)
+![](images/Figure%206.tif)
 
