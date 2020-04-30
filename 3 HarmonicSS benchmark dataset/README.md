@@ -31,7 +31,15 @@ Funding source: This study is included in the Workpackage 7 of  HarmonicSS,  an 
 # Organization of the repository
 
 The folder “Anonymized images” contains a total of 225 SGUS images, acquired from the four clinical centers in Europe, particularly:
-•	Rheumatology Clinic, Department of Medical Area, University of Udine, Academic Hospital S. Maria della Misericordia, Udine, Italy (Alen Zabotti, Sara Zandonella, Salvatore De Vita)
-•	 Department of Rheumatology, University Medical Centre Ljubljana, Slovenia (Alojzija Hocevar)
-•	Institute of Rheumatology, Belgrade, Serbia (Vera Milic)
-•	Unit of Clinical Rheumatology, Department of Rheumatology and Medical Sciences, ASST Centro Traumatologico Ortopedico G. Pini-CTO, Milan, Italy (Orazio De Lucia)
+1. Rheumatology Clinic, Department of Medical Area, University of Udine, Academic Hospital S. Maria della Misericordia, Udine, Italy (Alen Zabotti, Sara Zandonella, Salvatore De Vita)
+2. Department of Rheumatology, University Medical Centre Ljubljana, Slovenia (Alojzija Hocevar)
+3. Institute of Rheumatology, Belgrade, Serbia (Vera Milic)
+4. Unit of Clinical Rheumatology, Department of Rheumatology and Medical Sciences, ASST Centro Traumatologico Ortopedico G. Pini-CTO, Milan, Italy (Orazio De Lucia)
+
+Furthermore, we provide an accompanying excel file “Data info.xls” with the corresponding information about provided images, including:
+- gland type (parotid/submandibular), 
+- ultrasonography device brand (GE-Belgrade, Philips-Ljubljana, Esaote-Milano, Samsung-Udine), 
+- definite pSS (primary Sjogren’s syndrome) scores (De Vita, and OMERACT)
+- patients’ information
+
+
