@@ -11,7 +11,7 @@ Salivary gland ultrasonography (SGUS) has shown good potential in the diagnosis 
 
 Optimal feature subsets were found using the Genetic algorithm-based wrapper approach. 
 
-![](Figure%2002.jpg)
+![](Figure%2003.jpg)
 
 
 Among the considered algorithms (7 classifiers and 5 regressors), the best preforming was the Multilayer perceptron (MLP) classifier (κ = 0.7). The MLP over-performed average score achieved by the clinicians (κ = 0.67) by the considerable margin, while its reliability was on the level of human intra-observer variability (κ = 0.71). 
