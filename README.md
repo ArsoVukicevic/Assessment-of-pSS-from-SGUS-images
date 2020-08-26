@@ -7,4 +7,6 @@ Procedures for analysis of Salivary glands ultrasonography images  (HarmonicSS.e
 2 Deep Learning - SG segmentation: Deep learning segmentation of Primary Sjögren’s syndrome affected salivary glands from ultrasonography images
  
 
+3 HarmonicSS benchmark dataset: Salivary gland ultrasonography in primary Sjögren's Syndrome: a European multicenter reliability exercise for the HarmonicSS project.
+
 
