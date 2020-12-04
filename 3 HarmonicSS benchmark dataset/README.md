@@ -1,6 +1,7 @@
-This repository contains HarmonicSS salivary glands ultrasonography (SGUS) images used in the study: 
+This repository contains HarmonicSS salivary glands ultrasonography (SGUS) images used in the study (https://doi.org/10.3389/fmed.2020.581248): 
 
-# Salivary gland ultrasonography in primary Sjögren's Syndrome: a European multicenter reliability exercise for the HarmonicSS project. 
+# Salivary Gland Ultrasonography in Sjögren's Syndrome: A European Multicenter Reliability Exercise for the HarmonicSS Project. 
+
 
 Authors: Alen Zabotti1, Sara Zandonella Callegher1, Annarita Tullio2, Arso Vukicevic3, Alojzija Hocevar4, Vera Milic5, Giacomo Cafaro6, Marina Carotti7, Konstantina Delli8, Orazio De Lucia1, Diana Ernst9, Francesco Ferro10, Angelica Gattamelata11, Giuseppe Germanò12, Ivan Giovannini1, Daniel Hammenfors13, Malin Jonsson13, Sandrine Jousse-Joulin14, Pierluigi Macchioni12, Simone Parisi15, Carlo Perricone6, Martin Stradner16, Nenad Filipovic3, Athanasios G Tzioufas17  , Francesca Valent2 , Salvatore De Vita1*.   
 
